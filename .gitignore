@@ -1,0 +1,10 @@
+# Ne pas envoyer les fichiers de données lourds sur GitHub
+*.csv
+*.parquet
+data/
+
+# Environnement Python et PyCharm
+.venv/
+__pycache__/
+.idea/
+.env
