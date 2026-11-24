@@ -96,6 +96,3 @@ defi_analytics/
 ├── scripts/       # Scripts Python d'inspection et d'importation dans PostgreSQL
 └── sql/           # Scripts SQL (création des tables, contraintes, requêtes d'analyse)
 
-🏗️ Architecture des données — Medallion Architecture
-
-Le projet adopte une architecture Medallion afin de séparer les différentes étapes de traitement et de garantir la qualité, la traçabilité et la maintenabilité des données.
