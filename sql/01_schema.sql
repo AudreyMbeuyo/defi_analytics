@@ -24,7 +24,7 @@ CREATE TABLE dim_protocol (
     listed_at TIMESTAMP
 );
 
-CREATE TABLE dim_yields (
+CREATE TABLE dim_pool (
     pool_id VARCHAR(150) PRIMARY KEY,
     symbol TEXT,
     pool_meta TEXT,
@@ -33,27 +33,9 @@ CREATE TABLE dim_yields (
     exposure VARCHAR(50)
 );
 
-CREATE TABLE fact_chain_tvl (
-    date_id DATE NOT NULL REFERENCES dim_date(date_id),
-    chain VARCHAR(100) NOT NULL REFERENCES dim_chain(chain),
-    tvl_usd NUMERIC CHECK (tvl_usd >= 0),
-    PRIMARY KEY (date_id, chain)
-);
-
-CREATE TABLE fact_protocol_snapshots (
-    date_id DATE NOT NULL REFERENCES dim_date(date_id),
-    slug VARCHAR(150) NOT NULL REFERENCES dim_protocol(slug),
-    tvl_usd NUMERIC CHECK (tvl_usd >= 0),
-    change_1h_pct NUMERIC,
-    change_1d_pct NUMERIC,
-    change_7d_pct NUMERIC,
-    mcap_usd NUMERIC CHECK (mcap_usd >= 0),
-    PRIMARY KEY (date_id, slug)
-);
-
 CREATE TABLE fact_yield_pools (
     date_id DATE NOT NULL REFERENCES dim_date(date_id),
-    pool_id VARCHAR(150) NOT NULL REFERENCES dim_yields(pool_id),
+    pool_id VARCHAR(150) NOT NULL REFERENCES dim_pool(pool_id),
     chain VARCHAR(100) NOT NULL REFERENCES dim_chain(chain),
     protocol_slug VARCHAR(150) NOT NULL REFERENCES dim_protocol(slug),
     tvl_usd NUMERIC CHECK (tvl_usd >= 0),
