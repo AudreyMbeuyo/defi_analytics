@@ -5,6 +5,8 @@ import pandas as pd
 import pg8000.native
 
 data_dir = Path(__file__).resolve().parent.parent / "data"
+port_input = input("Port PostgreSQL (Entrée pour 5432) : ").strip()
+port = int(port_input) if port_input else 5432
 password = getpass("Mot de passe PostgreSQL (utilisateur postgres) : ")
 
 df_chains = pd.read_parquet(data_dir / "chains_snapshots.parquet")
