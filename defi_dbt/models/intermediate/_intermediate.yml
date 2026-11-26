@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: int_yield_pools_enriched
+    description: "Pools pure DeFi enrichis avec les métadonnées des protocoles et blockchains"
+    columns:
+      - name: yield_snapshot_id
+        description: "Clé unique (date + pool_id) vérifiant l'absence de doublons après jointures"
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_defi_raw__yield_pools')
+                field: yield_snapshot_id
+      - name: protocol_slug
+        description: "Référence vers le protocole DeFi associé"
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_defi_raw__protocols')
+                field: protocol_slug
