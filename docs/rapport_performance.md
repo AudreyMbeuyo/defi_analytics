@@ -219,4 +219,5 @@ Execution Time: 4.754 ms
 ```
 
 #### Analyse
-Gain : l'`Execution Time` passe de **`2 124,5 ms` à `4,75 ms` (447× plus rapide)** et les buffers passent de `164 594` à `3 461`. Fait intéressant : PostgreSQL a préféré **`idx_fyp_chain_tvl`** `(chain, tvl_usd)` plutôt que l'index partiel `idx_fyp_whale_pools`, car `idx_fyp_chain_tvl` fournit les lignes **déjà triées par `chain`** (`Presorted Key: fyp.chain`), ce qui a supprimé le coûteux tri sur disque (`external merge Disk: 2544kB`) nécessaire à `PARTITION BY fyp.chain` !
+Gain : l'`Execution Time` passe de **`2 124,5 ms` à `4,75 ms` et les buffers passent de `164 594` à `3 461`. 
+Fait intéressant : PostgreSQL a préféré **`idx_fyp_chain_tvl`** `(chain, tvl_usd)` plutôt que l'index partiel `idx_fyp_whale_pools`, car `idx_fyp_chain_tvl` fournit les lignes **déjà triées par `chain`** (`Presorted Key: fyp.chain`), ce qui a supprimé le coûteux tri sur disque (`external merge Disk: 2544kB`) nécessaire à `PARTITION BY fyp.chain` !
