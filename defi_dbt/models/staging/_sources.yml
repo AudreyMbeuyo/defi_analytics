@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name: defi_raw
+    schema: raw
+    description: "Données brutes DeFiLlama chargées depuis les fichiers Parquet"
+    tables:
+      - name: chains
+        description: "Snapshots quotidiens des blockchains"
+        columns:
+          - name: snapshot_date
+            data_tests:
+              - not_null
+          - name: chain
+            data_tests:
+              - not_null
+
+      - name: protocols
+        description: "Snapshots quotidiens des protocoles/banques"
+        columns:
+          - name: snapshot_date
+            data_tests:
+              - not_null
+          - name: slug
+            data_tests:
+              - not_null
+          - name: category
+            data_tests:
+              - not_null
+
+      - name: yield_pools
+        description: "Snapshots quotidiens des pools"
+        columns:
+          - name: snapshot_date
+            data_tests:
+              - not_null
+          - name: pool_id
+            data_tests:
+              - not_null
+          - name: chain
+            data_tests:
+              - not_null
+          - name: project
+            data_tests:
+              - not_null
