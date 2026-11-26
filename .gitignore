@@ -3,3 +3,7 @@
 __pycache__/
 .idea/
 .env
+
+target/
+dbt_packages/
+logs/

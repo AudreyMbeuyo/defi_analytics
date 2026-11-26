@@ -65,3 +65,44 @@ where fyp.pool_id is null
 group by dpr.category
 order by nb_protocoles desc;
 
+
+-- === TP2 : REQUETES AVANCEES ===
+
+'À la date du 2026-11-23, un investisseur veut connaître,
+pour chaque blockchain, les 3 placements les plus rentables
+(le rendement apy le plus élevé) parmi ceux qui sont suffisamment liquides (au moins 5 000 000 $ de TVL).'
+
+with p1 as (
+select fyp.chain,
+dpl.symbol,
+dpr.name,
+round(fyp.tvl_usd,2) as tvl_usd,
+round (fyp.apy,2) as apy,
+row_number() over(partition by fyp.chain order by apy desc) as row_num
+from fact_yield_pools fyp
+inner join dim_pool dpl on fyp.pool_id = dpl.pool_id
+inner join dim_protocol dpr on dpr.slug = fyp.protocol_slug
+where fyp.date_id = '2026-11-23'
+and fyp.apy is not null
+and fyp.tvl_usd >= 5000000
+)
+
+select * from p1
+where row_num <=3
+order by chain, row_num;
+
+
+'Sur les données réelles récentes (à partir du 2026-10-10), on veut mesurer l''évolution quotidienne
+du rendement des très gros pools sur Ethereum (ceux ayant une TVL d''au moins 100 000 000 $).'
+select fyp.date_id,
+dpl.symbol,
+round(fyp.apy,2) as apy,
+round(lag(fyp.apy,1) over(partition by fyp.pool_id order by fyp.date_id),2) as apy_prec,
+round((fyp.apy - lag(fyp.apy,1) over(partition by fyp.pool_id order by fyp.date_id)),2) as var_apy
+from fact_yield_pools fyp
+inner join dim_pool dpl on dpl.pool_id = fyp.pool_id
+where fyp.date_id >= '2026-10-10'
+and fyp.tvl_usd >= 100000000
+and fyp.chain ='Ethereum'
+order by dpl.symbol, fyp.pool_id, fyp.date_id
+limit 30;
