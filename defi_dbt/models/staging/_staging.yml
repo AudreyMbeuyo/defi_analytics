@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: stg_defi_raw__chains
+    description: "Snapshots quotidiens nettoyés des blockchains"
+    columns:
+      - name: chain_snapshot_id
+        data_tests:
+          - unique
+          - not_null
+      - name: snapshot_date
+        data_tests:
+          - not_null
+      - name: chain_name
+        data_tests:
+          - not_null
+
+  - name: stg_defi_raw__protocols
+    description: "Snapshots quotidiens nettoyés des protocoles"
+    columns:
+      - name: snapshot_date
+        data_tests:
+          - not_null
+      - name: protocol_slug
+        data_tests:
+          - not_null
+      - name: protocol_snapshot_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_defi_raw__yield_pools
+    description: "Snapshots quotidiens nettoyés des pools de rendement"
+    columns:
+      - name: snapshot_date
+        data_tests:
+          - not_null
+
+      - name: il_risk
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['yes', 'no']
+
+      - name: yield_snapshot_id
+        data_tests:
+          - unique
+          - not_null
+      - name: chain_name
+        data_tests:
+          - not_null
+
+      - name: pool_id
+        data_tests:
+          - not_null
+
+      - name: exposure
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [ 'single', 'multi' ]
+
+      - name: protocol_slug
+        data_tests:
+          - not_null
