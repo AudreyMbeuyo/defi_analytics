@@ -20,7 +20,7 @@ Projet académique d'ingénierie des données et de modélisation SQL autour de 
 ## 📦 Source des données & Licence
 - **Dataset Kaggle :** [DeFi Daily: TVL, Stablecoins, DEX & Yields](https://www.kaggle.com/datasets/danielaijdkx/defi-daily-tvl-stablecoins-dex-yields)
 - **Source originale :** API publique **DefiLlama** (données quotidiennes en USD, dates UTC)
-- **Licence & Attribution :** Données publiques DefiLlama avec attribution requise *(vérifier le badge exact sur Kaggle, ex : CC BY 4.0)*
+- **Licence & Attribution :** Données publiques DefiLlama avec attribution requise 
 
 ## 🛠️ Environnement technique
 - **SGBD :** PostgreSQL 19 (schéma en étoile à 5 tables, porté à **10 030 700 lignes** sur `fact_yield_pools`)
