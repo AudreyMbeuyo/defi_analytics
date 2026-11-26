@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Dimension temporelle quotidienne (Année > Trimestre > Mois > Jour)"
+    columns:
+      - name: date_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_chain
+    description: "Dimension des blockchains pure DeFi"
+    columns:
+      - name: chain_id
+        data_tests:
+          - unique
+          - not_null
+      - name: chain_name
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_protocol
+    description: "Dimension des protocoles pure DeFi (hors CEX)"
+    columns:
+      - name: protocol_id
+        data_tests:
+          - unique
+          - not_null
+      - name: protocol_slug
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_pool
+    description: "Dimension descriptive des pools de rendement et de leurs indicateurs de risque"
+    columns:
+      - name: pool_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_yield_pools
+    description: "Table de faits centrale. Grain : 1 ligne par pool DeFi et par jour (snapshot_date, pool_id)."
+    columns:
+      - name: yield_snapshot_id
+        description: "Clé primaire de substitution du grain (date + pool)"
+        data_tests:
+          - unique
+          - not_null
+      - name: date_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_id
+      - name: pool_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_pool')
+                field: pool_id
+      - name: chain_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_chain')
+                field: chain_id
+      - name: protocol_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_protocol')
+                field: protocol_id
