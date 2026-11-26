@@ -10,17 +10,17 @@
 
 ## 2. Tableau comparatif des 3 benchmarks
 
-| Requête | Médiane Avant (Exec. Time) | Opérateur Avant | Index testé (`03_index.sql`) | Médiane Après (Exec. Time) | Opérateur Après | Gain / Conclusion |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **B1** — Agrégat Solana ($\text{TVL} \ge 10\text{M\$}$) | 1 741 ms (`1527.1 ms`) | `Parallel Seq Scan` (`164 596` buffers) | `idx_fyp_chain_tvl` sur `(chain, tvl_usd)` | 735 ms (`709.9 ms`) | `Parallel Seq Scan` (`164 599` buffers) | Index non retenu par l'optimiseur (faible sélectivité sur Solana, baisse due au cache) |
+| Requête                                              | Médiane Avant (Exec. Time) | Opérateur Avant | Index testé (`03_index.sql`) | Médiane Après (Exec. Time) | Opérateur Après | Gain / Conclusion |
+|:-----------------------------------------------------| :--- | :--- | :--- | :--- | :--- | :--- |
+| **B1** — Agrégat Solana (TVL >= 10M$)                | 1 741 ms (`1527.1 ms`) | `Parallel Seq Scan` (`164 596` buffers) | `idx_fyp_chain_tvl` sur `(chain, tvl_usd)` | 735 ms (`709.9 ms`) | `Parallel Seq Scan` (`164 599` buffers) | Index non retenu par l'optimiseur (faible sélectivité sur Solana, baisse due au cache) |
 | **B2** — Fenêtre `LAG` sur `uniswap-v2` (`LIMIT 50`) | 73 ms (`36.8 ms`) | `Index Scan` PK (`32 263` buffers) | `idx_fyp_protocol_date_cov` (`INCLUDE`) | 125 ms (`68.1 ms`) | `Index Only Scan` (`552` buffers, `Heap Fetches: 0`) | **-98,3 % de buffers lus** (temps plus haut à cause du `LIMIT 50`) |
-| **B3** — Fenêtre `RANK` pools $\ge 500\text{M\$}$ (`LIMIT 50`) | 927 ms (`2124.5 ms`) | `Parallel Seq Scan` + `Disk Sort` (`164 594` buffers) | `idx_fyp_chain_tvl` + `idx_fyp_whale_pools` | 76 ms (**`4.75 ms`**) | `Index Scan` (`3 461` buffers, pré-trié par `chain`) | **~12× (chrono) / ~447× (`Execution Time`)**, suppression du tri sur disque |
+| **B3** — Fenêtre `RANK` pools >= 500M$ (`LIMIT 50`)  | 927 ms (`2124.5 ms`) | `Parallel Seq Scan` + `Disk Sort` (`164 594` buffers) | `idx_fyp_chain_tvl` + `idx_fyp_whale_pools` | 76 ms (**`4.75 ms`**) | `Index Scan` (`3 461` buffers, pré-trié par `chain`) | **~12× (chrono) / ~447× (`Execution Time`)**, suppression du tri sur disque |
 
 ---
 
 ## 3. Détail des benchmarks
 
-### Benchmark 1 : Jointure et agrégation par catégorie sur Solana ($\text{TVL} \ge 10\text{M\$}$)
+### Benchmark 1 : Jointure et agrégation par catégorie sur Solana (TVL >= 10M$)
 
 #### Requête testée
 ```sql
@@ -154,7 +154,7 @@ L'index couvrant a permis un **`Index Only Scan`** avec **`Heap Fetches: 0`** : 
 
 ---
 
-### Benchmark 3 : Jointure et fonction de fenêtre `RANK` sur les très gros pools ($\text{TVL} \ge 500\text{M\$}$)
+### Benchmark 3 : Jointure et fonction de fenêtre `RANK` sur les très gros pools (TVL >= 500M$)
 
 #### Requête testée
 ```sql

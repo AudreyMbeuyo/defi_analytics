@@ -54,7 +54,7 @@ Conception d'un schéma relationnel physique normalisé à **5 tables** (`sql/00
 ## 🧮 2. Requêtes SQL avancées (TP1 & TP2)
 
 Le script `sql/02_requetes_avancees.sql` regroupe les requêtes fondamentales (jointures, sous-requêtes scalaires, `GROUP BY` / `HAVING`, `LEFT JOIN ... IS NULL`) et **6 requêtes analytiques avancées** :
-1. **Classement (`ROW_NUMBER`) :** Top 3 des pools les plus rentables par blockchain ($\text{TVL} \ge 5\text{M\$}$).
+1. **Classement (`ROW_NUMBER`) :** Top 3 des pools les plus rentables par blockchain (TVL >= 5M$).
 2. **Comparaison temporelle (`LAG`) :** Variation quotidienne de l'APY par rapport à la veille sur les gros pools Ethereum.
 3. **Segmentation (`NTILE`) :** Découpage des pools en 4 quartiles de liquidité et comparaison de l'APY moyen.
 4. **Fenêtre glissante (`ROWS BETWEEN`) :** Moyenne mobile sur 7 jours de l'APY et cumul des volumes journaliers.
@@ -71,9 +71,9 @@ Protocole appliqué sur 3 requêtes (médiane de 3 exécutions à cache chaud, `
 
 | Benchmark | Médiane Avant (`Exec. Time`) | Opérateur Avant | Index créé (`03_index.sql`) | Médiane Après (`Exec. Time`) | Opérateur Après | Enseignement clé |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **B1** — Agrégat Solana ($\text{TVL} \ge 10\text{M\$}$) | 1 741 ms (`1527.1 ms`) | `Parallel Seq Scan` (`164 596` buffers) | Composite `(chain, tvl_usd)` | 735 ms (`709.9 ms`) | `Parallel Seq Scan` | **Index non retenu** : ~367k lignes dispersées (3,7 %), la lecture séquentielle reste optimale. |
+| **B1** — Agrégat Solana (TVL >= 10M$) | 1 741 ms (`1527.1 ms`) | `Parallel Seq Scan` (`164 596` buffers) | Composite `(chain, tvl_usd)` | 735 ms (`709.9 ms`) | `Parallel Seq Scan` | **Index non retenu** : ~367k lignes dispersées (3,7 %), la lecture séquentielle reste optimale. |
 | **B2** — `LAG` `uniswap-v2` (`LIMIT 50`) | 73 ms (`36.8 ms`) | `Index Scan` PK (`32 263` buffers) | Couvrant `INCLUDE (pool_id, tvl_usd, apy)` | 125 ms (`68.1 ms`) | `Index Only Scan` (`552` buffers, `Heap Fetches: 0`) | **-98,3 % de lectures buffers** sans accès table, mais `LIMIT 50` favorisait l'arrêt précoce avant. |
-| **B3** — `RANK` pools $\ge 500\text{M\$}$ (`LIMIT 50`) | 927 ms (`2124.5 ms`) | `Parallel Seq Scan` + `Disk Sort` (`164 594` buffers) | Composite `(chain, tvl_usd)` + Partiel | 76 ms (**`4.75 ms`**) | `Index Scan` (`3 461` buffers) | **~447× plus rapide** (`Exec. Time`) : l'index pré-trié par `chain` supprime le tri sur disque. |
+| **B3** — `RANK` pools >= 500M$ (`LIMIT 50`) | 927 ms (`2124.5 ms`) | `Parallel Seq Scan` + `Disk Sort` (`164 594` buffers) | Composite `(chain, tvl_usd)` + Partiel | 76 ms (**`4.75 ms`**) | `Index Scan` (`3 461` buffers) | **~447× plus rapide** (`Exec. Time`) : l'index pré-trié par `chain` supprime le tri sur disque. |
 
 📄 Voir l'analyse complète et les plans bruts dans **[`docs/rapport_performance.md`](docs/rapport_performance.md)**.
 
